@@ -6,8 +6,8 @@ final class HomeInitial extends HomeState {}
 
 class HomeChatHistory extends HomeState {
   final List<ChatHistoryList> chatHistoryList;
-
-  HomeChatHistory(this.chatHistoryList);
+  final String title;
+  HomeChatHistory(this.chatHistoryList, this.title);
 }
 
 class HomeLoading extends HomeState {}

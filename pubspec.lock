@@ -112,6 +112,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutterbootstrap5latest:
+    dependency: "direct main"
+    description:
+      name: flutterbootstrap5latest
+      sha256: "359555110c27b63b407fcad277837039b80b2a31cc619454b10286b1266e10bb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   http:
     dependency: "direct main"
     description:
@@ -128,6 +136,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intersperse:
+    dependency: transitive
+    description:
+      name: intersperse
+      sha256: "2f8a905c96f6cbba978644a3d5b31b8d86ddc44917662df7d27a61f3df66a576"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   leak_tracker:
     dependency: transitive
     description:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Home/home.dart';
+import 'Home/UI/home.dart';
 import 'Utils/sharedPrefs.dart';
 
 void main() async{

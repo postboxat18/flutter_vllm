@@ -1,17 +1,25 @@
-class ChatHistoryList {
-  String? key, msg;
+import 'package:flutter_vllm/Home/Model/chatList.dart';
 
-  ChatHistoryList(this.key, this.msg);
+class ChatHistoryList {
+  String? title;
+  List<ChatList>? chatList;
+
+  ChatHistoryList(this.title, this.chatList);
 
   ChatHistoryList.fromJson(Map<String, dynamic> chatMap) {
-    key = chatMap["key"];
-    msg = chatMap["msg"];
+    title = chatMap["title"];
+    List<dynamic> chitDynamic = chatMap["chatList"];
+    List<ChatList> chatList = [];
+    for (var data in chitDynamic) {
+      ChatList list = ChatList.fromJson(data);
+      chatList.add(list);
+    }
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = <String, dynamic>{};
-    map["key"] = key;
-    map["msg"] = msg;
+    map["title"] = title;
+    map["chatList"] = chatList;
     return map;
   }
 }

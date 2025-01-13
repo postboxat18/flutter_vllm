@@ -39,6 +39,7 @@ dependencies:
   http: ^1.2.2
   toast: ^0.3.0
   flutter_bloc: ^9.0.0
+  flutterbootstrap5latest: ^0.0.4
 
 dev_dependencies:
   flutter_test:
