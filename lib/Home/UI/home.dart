@@ -41,12 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
               int id = chatHistoryList.indexWhere(
                 (element) => element.title == title,
               );
-              print(title);
-              print(id);
-              print(chatHistoryList.length);
               List<ChatList> chatList = [];
               if (id != -1) {
                 chatList = chatHistoryList[id].chatList ?? [];
+
               }
 
               if (chatList.isNotEmpty) {

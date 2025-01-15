@@ -35,24 +35,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (title.isEmpty) {
           title = event.usrMsg.substring(
               0, event.usrMsg.length > 80 ? 80 : event.usrMsg.length);
-          chatHistoryList.add(ChatHistoryList(title, []));
+          chatList.add(ChatList("user", event.usrMsg));
+          chatHistoryList.add(ChatHistoryList(title, chatList));
         }
         //TITLE IS EXIST
         else {
-          for (var data in chatHistoryList) {
-            if (data.title == title) {
-              for (var res in (data.chatList) ?? []) {
-                ChatList list = ChatList.fromJson(res);
-                chatList.add(list);
+          for (int i = 0; i < chatHistoryList.length; i++) {
+            //EXIST TITLE
+            if (chatHistoryList[i].title == title) {
+              for (var res in (chatHistoryList[i].chatList) ?? []) {
+                chatList.add(res);
               }
+              chatList.add(ChatList("user", event.usrMsg));
+              chatHistoryList[i] = ChatHistoryList(title, chatList);
             }
           }
         }
-
-        chatList.add(ChatList("user", event.usrMsg));
-        // chatList.add(ChatList("bot", res.toString()));
-
-        chatHistoryList.add(ChatHistoryList(title, chatList));
         setChatHistory(chatHistoryList);
       } else {
         emit(HomeError());
@@ -70,15 +68,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       for (var res in data.chatList ?? []) {
         lis.add('{"key":"${res.key}","msg":"${res.msg}"}');
       }
+
       if (lis.isNotEmpty) {
         dicJs.add('{"title":"${data.title}","chatList":$lis}');
       }
     }
-    await SharedPrefs.setString("chatVllm", dicJs.toString());
+
+    if (dicJs.isNotEmpty) {
+      await SharedPrefs.setString("chatVllm", dicJs.toString());
+    }
   }
 
   getHistory(String title) {
-
     List<ChatHistoryList> chatHistoryList = [];
     if (title.isNotEmpty) {
       // CHECK IS EMPTY CHAT

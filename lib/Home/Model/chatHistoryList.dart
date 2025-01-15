@@ -9,11 +9,12 @@ class ChatHistoryList {
   ChatHistoryList.fromJson(Map<String, dynamic> chatMap) {
     title = chatMap["title"];
     List<dynamic> chitDynamic = chatMap["chatList"];
-    List<ChatList> chatList = [];
+    List<ChatList> inner_chatList = [];
     for (var data in chitDynamic) {
       ChatList list = ChatList.fromJson(data);
-      chatList.add(list);
+      inner_chatList.add(list);
     }
+    chatList = inner_chatList;
   }
 
   Map<String, dynamic> toJson() {
