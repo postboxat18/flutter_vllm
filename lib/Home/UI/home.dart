@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    homeHistoryBloc.add(HomeChatHistoryEvent("", ""));
+    homeHistoryBloc.add(HomeChatHistoryEvent("", "", []));
     super.initState();
   }
 
@@ -44,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
               List<ChatList> chatList = [];
               if (id != -1) {
                 chatList = chatHistoryList[id].chatList ?? [];
-
               }
 
               if (chatList.isNotEmpty) {
@@ -56,8 +55,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Card(
-                            color: Colors.blue,
+                          Container(
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              color: Colors.blue,
+                            ),
                             margin: EdgeInsets.fromLTRB(5, 10, 15, 10),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -74,8 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Card(
-                            color: Colors.white,
+                          Container(
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              color: Colors.white,
+                            ),
                             margin: EdgeInsets.fromLTRB(15, 10, 5, 10),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -135,15 +142,21 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             return Scaffold(
                 appBar: AppBar(
+                  backgroundColor: Colors.black,
                   title: Text("Flutter Vllm"),
                   actions: [
+                    //NEW CHAT
                     IconButton(
-                        onPressed: () {}, icon: Icon(Icons.add_comment_rounded))
+                        onPressed: () {
+                          homeHistoryBloc.add(
+                              HomeChatHistoryEvent("", "", chatHistoryList));
+                        },
+                        icon: Icon(Icons.mode_edit_rounded))
                   ],
                 ),
                 drawer: chatHistoryList.isEmpty
                     ? Container()
-                    : MyDrawer(chatHistoryList),
+                    : MyDrawer(homeHistoryBloc, title, chatHistoryList),
                 body: Stack(alignment: Alignment.bottomCenter, children: [
                   //HISTORY
                   historyWidget,
@@ -192,7 +205,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             if (textEditingController.text.trim().isNotEmpty) {
                               homeHistoryBloc.add(HomeChatHistoryEvent(
-                                  textEditingController.text.trim(), title));
+                                  textEditingController.text.trim(),
+                                  title,
+                                  chatHistoryList));
                               textEditingController.clear();
                             }
                           },

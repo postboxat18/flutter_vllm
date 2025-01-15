@@ -23,7 +23,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     emit(HomeLoading());
     //GET HISTORY
-    List<ChatHistoryList> chatHistoryList = getHistory(title);
+    List<ChatHistoryList> chatHistoryList = event.chatHistoryList;
+    chatHistoryList = getHistory(title, chatHistoryList);
     // GET MSG FROM VLLM
     if (event.usrMsg.isNotEmpty) {
       // var response = await chatAPI(event.usrMsg);
@@ -57,7 +58,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
     }
     //GET HISTORY
-    chatHistoryList = getHistory(title);
+    chatHistoryList = getHistory(title, chatHistoryList);
     emit(HomeChatHistory(chatHistoryList, title));
   }
 
@@ -79,13 +80,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  getHistory(String title) {
-    List<ChatHistoryList> chatHistoryList = [];
+  getHistory(String title, List<ChatHistoryList> chatHistoryList) {
     if (title.isNotEmpty) {
       // CHECK IS EMPTY CHAT
-      if (SharedPrefs.getString("chatVllm").isEmpty) {
+      if (SharedPrefs.getString("chatVllm").isNotEmpty) {
         chatHistoryList = [];
-      } else {
         var shars = SharedPrefs.getString("chatVllm");
         //STR TO JSON
         List<dynamic> chatVllm = jsonDecode(shars);

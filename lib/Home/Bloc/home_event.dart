@@ -5,6 +5,7 @@ sealed class HomeEvent {}
 class HomeChatHistoryEvent extends HomeEvent {
   final String usrMsg;
   final String title;
+  final List<ChatHistoryList> chatHistoryList;
 
-  HomeChatHistoryEvent(this.usrMsg, this.title);
+  HomeChatHistoryEvent(this.usrMsg, this.title, this.chatHistoryList);
 }
