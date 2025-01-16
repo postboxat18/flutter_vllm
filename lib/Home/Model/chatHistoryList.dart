@@ -23,4 +23,8 @@ class ChatHistoryList {
     map["chatList"] = chatList;
     return map;
   }
+  @override
+  String toString() {
+    return '{"title":"$title","chatList":$chatList}';
+  }
 }

@@ -14,4 +14,10 @@ class ChatList {
     map["msg"] = msg;
     return map;
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return '{"key":"$key","msg":"$msg"}';
+  }
 }

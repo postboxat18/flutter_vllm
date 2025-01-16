@@ -30,13 +30,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       // var response = await chatAPI(event.usrMsg);
       // if (response.statusCode == 200) {
       if (true) {
-        // var res = response.stream.bytesToString();
         List<ChatList> chatList = [];
+        // var res = response.stream.bytesToString();
         //TITLE IS NOT EXIST
         if (title.isEmpty) {
           title = event.usrMsg.substring(
               0, event.usrMsg.length > 80 ? 80 : event.usrMsg.length);
           chatList.add(ChatList("user", event.usrMsg));
+          // chatList.add(ChatList("bot", res.toString()));
           chatHistoryList.add(ChatHistoryList(title, chatList));
         }
         //TITLE IS EXIST
@@ -48,6 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 chatList.add(res);
               }
               chatList.add(ChatList("user", event.usrMsg));
+              // chatList.add(ChatList("bot", res.toString()));
               chatHistoryList[i] = ChatHistoryList(title, chatList);
             }
           }
@@ -63,20 +65,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   setChatHistory(List<ChatHistoryList> chatHistoryList) async {
-    var dicJs = [];
-    for (var data in chatHistoryList) {
-      var lis = [];
-      for (var res in data.chatList ?? []) {
-        lis.add('{"key":"${res.key}","msg":"${res.msg}"}');
-      }
-
-      if (lis.isNotEmpty) {
-        dicJs.add('{"title":"${data.title}","chatList":$lis}');
-      }
-    }
-
-    if (dicJs.isNotEmpty) {
-      await SharedPrefs.setString("chatVllm", dicJs.toString());
+    if (chatHistoryList.isNotEmpty) {
+      await SharedPrefs.setString("chatVllm", chatHistoryList.toString());
     }
   }
 
@@ -87,10 +77,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         chatHistoryList = [];
         var shars = SharedPrefs.getString("chatVllm");
         //STR TO JSON
-        List<dynamic> chatVllm = jsonDecode(shars);
-        for (var data in chatVllm) {
-          ChatHistoryList list = ChatHistoryList.fromJson(data);
-          chatHistoryList.add(list);
+        try {
+          var chatVllm =
+              json.decode(shars).cast<Map<String, dynamic>>().toList();
+          for (var data in chatVllm) {
+            ChatHistoryList list = ChatHistoryList.fromJson(data);
+            chatHistoryList.add(list);
+          }
+        } catch (e) {
+          print("error:$e\n$shars");
         }
       }
     }

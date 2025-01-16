@@ -51,6 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: chatList.length,
                   itemBuilder: (context, index) {
                     if (chatList[index].key == "bot") {
+                      String msg = chatList[index].msg.toString();
+                      /*  var jsStr = chatList[index].msg.toString();
+                      RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
+                      var cpyList = reg.allMatches(jsStr);*/
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "data $index",
+                                msg,
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -73,6 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       );
                     } else {
+                      var jsStr = chatList[index].msg.toString();
+                      RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
+                      var cpyList = reg.allMatches(jsStr);
+                      print("cpyList::$cpyList");
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.end,
