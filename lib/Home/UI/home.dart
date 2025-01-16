@@ -55,10 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       /*  var jsStr = chatList[index].msg.toString();
                       RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
                       var cpyList = reg.allMatches(jsStr);*/
-
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      return Stack(
+                        alignment: AlignmentDirectional.centerStart,
                         children: [
                           Container(
                             decoration: ShapeDecoration(
@@ -66,25 +64,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                   borderRadius: BorderRadius.circular(30)),
                               color: Colors.blue,
                             ),
-                            margin: EdgeInsets.fromLTRB(5, 10, 15, 10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                msg,
-                                style: TextStyle(color: Colors.white),
-                              ),
+                            margin: EdgeInsets.fromLTRB(10, 10, 55, 10),
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              msg.toString(),
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
                       );
+
                     } else {
                       var jsStr = chatList[index].msg.toString();
                       RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
                       var cpyList = reg.allMatches(jsStr);
                       print("cpyList::$cpyList");
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
+
+                      return Stack(
+                        alignment: AlignmentDirectional.centerEnd,
                         children: [
                           Container(
                             decoration: ShapeDecoration(
@@ -92,17 +90,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                   borderRadius: BorderRadius.circular(30)),
                               color: Colors.white,
                             ),
-                            margin: EdgeInsets.fromLTRB(15, 10, 5, 10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                chatList[index].msg.toString(),
-                                style: TextStyle(color: Colors.black),
-                              ),
+                            margin: EdgeInsets.fromLTRB(55, 10, 10, 10),
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              chatList[index].msg.toString(),
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.black),
                             ),
                           ),
                         ],
                       );
+
                     }
                   },
                 );

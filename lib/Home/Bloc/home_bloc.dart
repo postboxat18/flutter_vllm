@@ -66,7 +66,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   setChatHistory(List<ChatHistoryList> chatHistoryList) async {
     if (chatHistoryList.isNotEmpty) {
-      await SharedPrefs.setString("chatVllm", chatHistoryList.toString());
+      List<ChatHistoryList> reChatHistoryList = [];
+      for (var data in chatHistoryList) {
+        List<ChatList> chList = [];
+        for (var ch in data.chatList ?? []) {
+          String msg = ch.msg
+              .replaceAll("\"", "'")
+              .replaceAll("\n", "#>")
+              .replaceAll("[", "~>")
+              .replaceAll("]", "<~")
+              .replaceAll("{", "->")
+              .replaceAll("}", "<-");
+          chList.add(ChatList(ch.key, msg));
+        }
+        String title = data.title
+            .toString()
+            .replaceAll("\"", "'")
+            .replaceAll("\n", "#>")
+            .replaceAll("[", "~>")
+            .replaceAll("]", "<~")
+            .replaceAll("{", "->")
+            .replaceAll("}", "<-");
+        reChatHistoryList.add(ChatHistoryList(title, chList));
+      }
+
+      await SharedPrefs.setString("chatVllm", reChatHistoryList.toString());
     }
   }
 
@@ -82,7 +106,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               json.decode(shars).cast<Map<String, dynamic>>().toList();
           for (var data in chatVllm) {
             ChatHistoryList list = ChatHistoryList.fromJson(data);
-            chatHistoryList.add(list);
+            ChatHistoryList main_list;
+            List<ChatList> chList = [];
+            for (var ch in list.chatList ?? []) {
+              String msg = ch.msg
+                  .replaceAll("'", "\"")
+                  .replaceAll("#>", "\n")
+                  .replaceAll("~>", "[")
+                  .replaceAll("<~", "]")
+                  .replaceAll("->", "{")
+                  .replaceAll("<-", "}");
+              ChatList ls = ChatList(ch.key, msg);
+              chList.add(ls);
+            }
+            if (chList.isNotEmpty) {
+              main_list = ChatHistoryList(list.title, chList);
+              chatHistoryList.add(main_list);
+            }
           }
         } catch (e) {
           print("error:$e\n$shars");
