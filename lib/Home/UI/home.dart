@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (hisState is HomeChatHistory) {
               title = hisState.title;
               chatHistoryList = hisState.chatHistoryList;
-              print("chatHis=>$chatHistoryList");
+
               int id = chatHistoryList.indexWhere(
                 (element) => element.title == title,
               );

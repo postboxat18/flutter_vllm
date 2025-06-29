@@ -8,7 +8,8 @@ import "package:collection/collection.dart";
 import '../Home/Model/chatHistoryList.dart';
 import '../Home/Model/chatList.dart';
 
-String url = 'http://192.168.21.233:8080/';
+// String url = 'http://192.168.21.233:8080/';
+String url = 'http://192.168.0.104:8080/';
 // vllm serve meta-llama/Llama-3.1-8B-Instruct --disable-custom-all-reduce --tensor-parallel-size 4 > /dev/null
 chatAPI1(String msg) async {
   try {
@@ -72,7 +73,6 @@ Future<MutableLiveData> setChatHistory(String title, String msg, String key,
       "key": key,
       "dateTime": dateTime
     };
-    print("dict_=>$dict_");
     request.body = json.encode(dict_);
     request.headers.addAll(headers);
     http.StreamedResponse streamedResponse = await request.send();
@@ -113,11 +113,12 @@ Future<MutableLiveData> getChatHistory(String title, String uuid_name) async {
             chatList.add(ChatList(
                 key: key,
                 msg: key == "user" ? res["msg"] : json.decode(res["msg"]),
-                dateTime: res["dateTime"]));
+                dateTime: res["dateTime"]
+            ));
           }
         }
         chatHistoryList
-            .add(ChatHistoryList(data.value[0]["title"], uuid_name, chatList));
+            .add(ChatHistoryList(data.value[0]["title"], data.value[0]["uuid_name"], chatList));
       }
       liveData.value = chatHistoryList;
     } else {
