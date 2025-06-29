@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_vllm/Home/Model/chatHistoryList.dart';
 import 'package:flutter_vllm/Home/Model/chatList.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../API/api.dart';
-import '../../Utils/sharedPrefs.dart';
 
 part 'home_event.dart';
 
@@ -20,64 +20,109 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeChatHistoryEvent(
       HomeChatHistoryEvent event, Emitter<HomeState> emit) async {
     String title = event.title;
-
+    String uuid_name = event.uuid_name;
     emit(HomeLoading());
-    //GET HISTORY
-    List<ChatHistoryList> chatHistoryList = event.chatHistoryList;
-    chatHistoryList = getHistory(title, chatHistoryList);
+
     // GET MSG FROM VLLM
     if (event.usrMsg.isNotEmpty) {
-      // var response = await chatAPI(event.usrMsg);
-      // if (response.statusCode == 200) {
-      if (true) {
-        List<ChatList> chatList = [];
-        // var res = response.stream.bytesToString();
-        //TITLE IS NOT EXIST
-        if (title.isEmpty) {
-          title = event.usrMsg.substring(
-              0, event.usrMsg.length > 80 ? 80 : event.usrMsg.length);
-          chatList.add(ChatList("user", event.usrMsg));
-          // chatList.add(ChatList("bot", res.toString()));
-          chatHistoryList.add(ChatHistoryList(title, chatList));
-        }
-        //TITLE IS EXIST
-        else {
-          for (int i = 0; i < chatHistoryList.length; i++) {
-            //EXIST TITLE
-            if (chatHistoryList[i].title == title) {
-              for (var res in (chatHistoryList[i].chatList) ?? []) {
-                chatList.add(res);
-              }
-              chatList.add(ChatList("user", event.usrMsg));
-              // chatList.add(ChatList("bot", res.toString()));
-              chatHistoryList[i] = ChatHistoryList(title, chatList);
-            }
-          }
-        }
-        setChatHistory(chatHistoryList);
+      List<ChatList> chatList = [];
+      String startTime = DateTime.now().toString();
+      chatList
+          .add(ChatList(key: "user", msg: event.usrMsg, dateTime: startTime));
+      var res = await chatAPI(event.usrMsg);
+      if (res.value == "") {
+        emit(HomeError("Somethings went wrong", 1));
       } else {
-        emit(HomeError());
+        var response = res.value;
+
+        if (response.statusCode == 200) {
+          var res = response.body;
+          //TITLE IS NOT EXIST
+          if (title.isEmpty) {
+            /*String titleMsg = """The Given text are ${event.usrMsg}.
+                - Do not do any process asking in given context.
+                - Need Title for given context.
+                - Return Proper JSON format.
+                - Do not add any preamble or postamble text to the final output. 
+                ```json
+                {"title":""}
+               """;
+            var titleResp = await chatAPI(titleMsg);
+            if (titleResp.value == "") {
+              emit(HomeError("Somethings went wrong", 1));
+            } else {
+              var titleResponse = titleResp.value;
+              if (titleResponse.statusCode == 200) {
+                String responseTitle;
+                responseTitle = titleResponse.body;
+                print("titleResponse=>$responseTitle");
+
+                try {
+                  var reg = r"{.*?}";
+                  var regEx = RegExp(reg, dotAll: true);
+                  var match = regEx.matchAsPrefix(responseTitle);
+                  print("Match=>$match");
+                  var extractMatch = match?.group(0);
+                  print("extractMatch=>$extractMatch");
+                  var en_title = json.decode("$extractMatch");
+                  title = en_title["title"];
+                } catch (e, stackTrace) {
+                  title = event.usrMsg.length > 30
+                      ? event.usrMsg.substring(0, 30)
+                      : event.usrMsg;
+                  print("load error:$e,$stackTrace");
+                }
+              } else {
+                title = event.usrMsg.substring(
+                    0, event.usrMsg.length > 80 ? 80 : event.usrMsg.length);
+              }
+            }*/
+            title = event.usrMsg.substring(
+                0, event.usrMsg.length > 80 ? 80 : event.usrMsg.length);
+
+            var uuid = Uuid();
+            var v1 = uuid.v1();
+            chatList.add(ChatList(
+                key: "bot",
+                msg: res.toString(),
+                dateTime: DateTime.now().toString()));
+            await setChatHistory(
+                title, event.usrMsg, "user", startTime, v1.toString());
+            await setChatHistory(title, json.decode(res.toString()), "bot",
+                DateTime.now().toString(), v1.toString());
+          }
+          //TITLE IS EXIST
+          else {
+            await setChatHistory(
+                title, event.usrMsg, "user", startTime, uuid_name);
+            await setChatHistory(title, json.decode(res.toString()), "bot",
+                DateTime.now().toString(), uuid_name);
+          }
+        } else {
+          emit(HomeError(response.reasonPhrase.toString(), 1));
+        }
       }
     }
     //GET HISTORY
-    chatHistoryList = getHistory(title, chatHistoryList);
+    var getRes = await getChatHistory(title, uuid_name);
+    List<ChatHistoryList> chatHistoryList = getRes.value;
     emit(HomeChatHistory(chatHistoryList, title));
   }
 
-  setChatHistory(List<ChatHistoryList> chatHistoryList) async {
+/*setChatHistory(List<ChatHistoryList> chatHistoryList) async {
     if (chatHistoryList.isNotEmpty) {
       List<ChatHistoryList> reChatHistoryList = [];
       for (var data in chatHistoryList) {
         List<ChatList> chList = [];
-        for (var ch in data.chatList ?? []) {
-          String msg = ch.msg
-              .replaceAll("\"", "'")
+        for (ChatList ch in data.chatList ?? []) {
+          String? msg = ch.msg
+              ?.replaceAll("\"", "'")
               .replaceAll("\n", "#>")
               .replaceAll("[", "~>")
               .replaceAll("]", "<~")
               .replaceAll("{", "->")
               .replaceAll("}", "<-");
-          chList.add(ChatList(ch.key, msg));
+          chList.add(ChatList(key: ch.key, msg: msg, dateTime: ch.dateTime));
         }
         String title = data.title
             .toString()
@@ -95,11 +140,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   getHistory(String title, List<ChatHistoryList> chatHistoryList) {
+    print("resChat=>${SharedPrefs.getString("chatVllm")}");
     if (title.isNotEmpty) {
       // CHECK IS EMPTY CHAT
       if (SharedPrefs.getString("chatVllm").isNotEmpty) {
         chatHistoryList = [];
         var shars = SharedPrefs.getString("chatVllm");
+        print(shars);
         //STR TO JSON
         try {
           var chatVllm =
@@ -108,15 +155,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ChatHistoryList list = ChatHistoryList.fromJson(data);
             ChatHistoryList main_list;
             List<ChatList> chList = [];
-            for (var ch in list.chatList ?? []) {
-              String msg = ch.msg
-                  .replaceAll("'", "\"")
+            for (ChatList ch in list.chatList ?? []) {
+              String? msg = ch.msg
+                  ?.replaceAll("'", "\"")
                   .replaceAll("#>", "\n")
                   .replaceAll("~>", "[")
                   .replaceAll("<~", "]")
                   .replaceAll("->", "{")
                   .replaceAll("<-", "}");
-              ChatList ls = ChatList(ch.key, msg);
+              ChatList ls =
+                  ChatList(key: ch.key, msg: msg, dateTime: ch.dateTime);
               chList.add(ls);
             }
             if (chList.isNotEmpty) {
@@ -124,11 +172,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               chatHistoryList.add(main_list);
             }
           }
-        } catch (e) {
-          print("error:$e\n$shars");
+        } catch (e, stackTrace) {
+          print("error:$e,$stackTrace,\n$shars");
         }
       }
     }
     return chatHistoryList;
-  }
+  }*/
 }

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vllm/API/api.dart';
 import 'package:flutter_vllm/Home/Bloc/home_bloc.dart';
 import 'package:flutter_vllm/Home/Model/chatHistoryList.dart';
 
@@ -18,7 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    homeHistoryBloc.add(HomeChatHistoryEvent("", "", []));
+    homeHistoryBloc.add(HomeChatHistoryEvent("", "", "", []));
     super.initState();
   }
 
@@ -33,25 +36,29 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, hisState) {
             Widget historyWidget;
             String title = "";
+            String uuid_name = "";
             List<ChatHistoryList> chatHistoryList = [];
             if (hisState is HomeChatHistory) {
               title = hisState.title;
               chatHistoryList = hisState.chatHistoryList;
-
+              print("chatHis=>$chatHistoryList");
               int id = chatHistoryList.indexWhere(
                 (element) => element.title == title,
               );
               List<ChatList> chatList = [];
               if (id != -1) {
                 chatList = chatHistoryList[id].chatList ?? [];
+                uuid_name = chatHistoryList[id].uuid_name ?? "";
               }
 
               if (chatList.isNotEmpty) {
+                print(chatList);
                 historyWidget = ListView.builder(
                   itemCount: chatList.length,
                   itemBuilder: (context, index) {
                     if (chatList[index].key == "bot") {
                       String msg = chatList[index].msg.toString();
+
                       /*  var jsStr = chatList[index].msg.toString();
                       RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
                       var cpyList = reg.allMatches(jsStr);*/
@@ -65,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: Colors.blue,
                             ),
                             margin: EdgeInsets.fromLTRB(10, 10, 55, 10),
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.fromLTRB(15, 25, 15, 25),
                             child: Text(
                               msg.toString(),
                               textAlign: TextAlign.start,
@@ -74,12 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       );
-
                     } else {
                       var jsStr = chatList[index].msg.toString();
-                      RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
+                      /*RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
                       var cpyList = reg.allMatches(jsStr);
-                      print("cpyList::$cpyList");
+                      print("cpyList::$cpyList");*/
 
                       return Stack(
                         alignment: AlignmentDirectional.centerEnd,
@@ -91,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: Colors.white,
                             ),
                             margin: EdgeInsets.fromLTRB(55, 10, 10, 10),
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.fromLTRB(15, 25, 15, 25),
                             child: Text(
                               chatList[index].msg.toString(),
                               textAlign: TextAlign.start,
@@ -100,7 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       );
-
                     }
                   },
                 );
@@ -155,8 +160,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     //NEW CHAT
                     IconButton(
                         onPressed: () {
-                          homeHistoryBloc.add(
-                              HomeChatHistoryEvent("", "", chatHistoryList));
+                          homeHistoryBloc.add(HomeChatHistoryEvent(
+                              "", "", "", chatHistoryList));
                         },
                         icon: Icon(Icons.mode_edit_rounded))
                   ],
@@ -214,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               homeHistoryBloc.add(HomeChatHistoryEvent(
                                   textEditingController.text.trim(),
                                   title,
+                                  uuid_name,
                                   chatHistoryList));
                               textEditingController.clear();
                             }

@@ -12,4 +12,9 @@ class HomeChatHistory extends HomeState {
 
 class HomeLoading extends HomeState {}
 
-class HomeError extends HomeState {}
+class HomeError extends HomeState {
+  final String msg;
+  final int val;
+
+  HomeError(this.msg, this.val);
+}
