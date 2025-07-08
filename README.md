@@ -1,8 +1,7 @@
-We are Using `llama3.1:latest` with Ollama, and includes all previous enhancements (🎥 video, icons, features, etc.).
+Using `llama3.1:latest` with Ollama, and includes all previous enhancements (🎥 video, icons, features, etc.).
 
 ---
 
-````markdown
 # 🚀 Flutter Chat App with vLLM + Ollama (`llama3.1:latest`)
 
 A cross-platform 💬 **Chat Application** built with **Flutter**, integrating **Ollama** hosting the `llama3.1:latest` model via a Python backend.
@@ -22,7 +21,9 @@ A cross-platform 💬 **Chat Application** built with **Flutter**, integrating *
 ## 📹 Demo Video
 
 > ▶️ Watch the working demo here:
-![Screen_recording_20250708_201728-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/af32d0d0-e70b-4ebc-a1ac-9d6d3d4a97c8)
+
+![Untitledvideo-MadewithClipchamp1-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/56bab054-6105-4670-b64c-1b20c512eb4c)
+
 
 
 ---
