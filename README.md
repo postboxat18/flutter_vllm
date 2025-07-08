@@ -16,6 +16,7 @@ A cross-platform 💬 **Chat Application** built with **Flutter**, integrating *
 - 🔗 **REST API** integration
 - 🎥 Video demo attached
 - ✍️ Full article available on Medium
+- 🧑‍💻 GitHub links for both Flutter & Python repos
 
 ---
 
@@ -31,6 +32,11 @@ A cross-platform 💬 **Chat Application** built with **Flutter**, integrating *
 Learn how this project was built from scratch:
 
 📝 [**Building Your Own ChatGPT with Ollama, FastAPI, and Flutter**](https://medium.com/@aravinthc18/building-your-own-chatgpt-with-ollama-fastapi-and-flutter-ba9066456b4e)
+
+## 🔗 GitHub Repositories
+
+- 🌐 **Flutter Frontend**: [github.com/postboxat18/flutter_vllm](https://github.com/postboxat18/flutter_vllm)
+- ⚙️ **Python + Ollama Backend**: [github.com/postboxat18/OllamaFlask](https://github.com/postboxat18/OllamaFlask)
 
 ---
 
