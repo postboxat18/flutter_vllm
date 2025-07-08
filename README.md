@@ -1,4 +1,4 @@
-Thanks! Here's the **updated `README.md`** that reflects you’re using `llama3.1:latest` with Ollama, and includes all previous enhancements (🎥 video, icons, features, etc.).
+We are Using `llama3.1:latest` with Ollama, and includes all previous enhancements (🎥 video, icons, features, etc.).
 
 ---
 
