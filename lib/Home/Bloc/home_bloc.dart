@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_vllm/Home/Model/chatHistoryList.dart';
 import 'package:flutter_vllm/Home/Model/chatList.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../API/api.dart';
@@ -25,7 +26,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     // GET MSG FROM VLLM
     if (event.usrMsg.isNotEmpty) {
-      String startTime = DateTime.now().toString();
+      DateFormat format = DateFormat('yyyy-MM-dd h:m a');
+      String startTime = format.format(DateTime.now());
       var res = await chatAPI(event.usrMsg);
       if (res.value == "") {
         emit(HomeError("Somethings went wrong", 1));
@@ -50,7 +52,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await setChatHistory(
                 title, event.usrMsg, "user", startTime, uuid_name);
             await setChatHistory(title, json.decode(res.toString()), "bot",
-                DateTime.now().toString(), uuid_name);
+                format.format(DateTime.now()), uuid_name);
           }
         } else {
           emit(HomeError(response.reasonPhrase.toString(), 1));

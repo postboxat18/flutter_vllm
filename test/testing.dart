@@ -2,6 +2,7 @@ import 'dart:convert';
 import "package:collection/collection.dart";
 import 'package:flutter_vllm/Home/Model/chatHistoryList.dart';
 import 'package:flutter_vllm/Home/Model/chatList.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -18,10 +19,9 @@ void func() {
   // print(enMatch);
   // print(json.decode(enMatch.toString())["title"]);
 
-  // Step 2: Regex to find: "title": "some value"
-  var uuid = Uuid();
-  var v1 = uuid.v1();
-  print(v1.toString());
+  DateFormat format = DateFormat('yyyy-MM-dd h:m a');
+  String startTime = format.format(DateTime.now());
+  print(startTime);
 
 
 

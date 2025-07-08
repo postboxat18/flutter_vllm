@@ -28,6 +28,6 @@ class ChatHistoryList {
   }
   @override
   String toString() {
-    return '{"title":"$title","chatList":$chatList}';
+    return '{"title":"$title","uuid_name":$uuid_name,"chatList":$chatList}';
   }
 }

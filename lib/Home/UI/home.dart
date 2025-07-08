@@ -1,11 +1,10 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vllm/API/api.dart';
 import 'package:flutter_vllm/Home/Bloc/home_bloc.dart';
 import 'package:flutter_vllm/Home/Model/chatHistoryList.dart';
-
+import 'package:intl/intl.dart';
 import '../../Drawer/UI/drawer.dart';
 import '../Model/chatList.dart';
 
@@ -52,7 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
               }
 
               if (chatList.isNotEmpty) {
-                print(chatList);
                 historyWidget = ListView.builder(
                   itemCount: chatList.length,
                   itemBuilder: (context, index) {
@@ -60,11 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       String msg = chatList[index].msg.toString();
 
                       /*  var jsStr = chatList[index].msg.toString();
-                      RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
-                      var cpyList = reg.allMatches(jsStr);*/
-                      return Stack(
-                        alignment: AlignmentDirectional.centerStart,
+                        RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
+                        var cpyList = reg.allMatches(jsStr);*/
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Text(
+                            chatList[index].dateTime.toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
                           Container(
                             decoration: ShapeDecoration(
                               shape: RoundedRectangleBorder(
@@ -84,12 +87,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     } else {
                       var jsStr = chatList[index].msg.toString();
                       /*RegExp reg = RegExp(r'\[\s*{.*?}\s*\]');
-                      var cpyList = reg.allMatches(jsStr);
-                      print("cpyList::$cpyList");*/
+                        var cpyList = reg.allMatches(jsStr);
+                        print("cpyList::$cpyList");*/
 
-                      return Stack(
-                        alignment: AlignmentDirectional.centerEnd,
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                chatList[index].dateTime.toString(),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
                           Container(
                             decoration: ShapeDecoration(
                               shape: RoundedRectangleBorder(
@@ -169,9 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 drawer: chatHistoryList.isEmpty
                     ? Container()
                     : MyDrawer(homeHistoryBloc, title, chatHistoryList),
-                body: Stack(alignment: Alignment.bottomCenter, children: [
+                body: Column(children: [
                   //HISTORY
-                  historyWidget,
+                  Expanded(child: historyWidget),
                   //CHAT
                   Container(
                     color: Colors.black,

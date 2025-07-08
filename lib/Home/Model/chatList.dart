@@ -20,6 +20,6 @@ class ChatList {
   @override
   String toString() {
     // TODO: implement toString
-    return '{"key":"$key","msg":"$msg","dateTime":"$dateTime"}';
+    return '{"key":"$key","dateTime":"$dateTime"}';
   }
 }
