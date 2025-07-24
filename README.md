@@ -156,6 +156,3 @@ POST /v1/completions
 MIT License © 2025 Aravinth C
 
 ---
-
-```
-```
